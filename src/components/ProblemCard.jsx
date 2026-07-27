@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { supabase } from '../supabaseClient'
-import { STATUSES, categoryLabel } from '../constants'
+import { STATUSES, categoryLabel, serviceLabel } from '../constants'
 import StatusBadge from './StatusBadge'
 
 export default function ProblemCard({ problem, isStaff, onUpdate, onDelete }) {
@@ -49,7 +49,7 @@ export default function ProblemCard({ problem, isStaff, onUpdate, onDelete }) {
       {/* --- Always visible: the basics --- */}
       <div className="card-head">
         <span className="cat-tag">{categoryLabel(problem.category)}</span>
-        {problem.priority === 'urgent' && <span className="urgent">Urgent</span>}
+        <span className="cat-tag">{serviceLabel(problem.service_type)}</span>
         <StatusBadge status={problem.status} />
       </div>
 

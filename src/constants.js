@@ -13,10 +13,15 @@ export const STATUSES = {
   resolved:   { label: 'Resolved',           color: '#4fd18b' }, // green
 }
 
-export const PRIORITIES = [
-  { id: 'normal', label: 'Normal' },
-  { id: 'urgent', label: 'Urgent' },
+export const SERVICE_TYPE = [
+  { id: 'electrician', label: 'Electrician' },
+  { id: 'plumber', label: 'Plumber' },
+  { id: 'carpenter', label: 'Carpenter' },
+  { id: 'others', label: 'Others' },
 ]
 
 export const categoryLabel = (id) =>
   CATEGORIES.find((c) => c.id === id)?.label || id
+
+export const serviceLabel = (id) =>
+  SERVICE_TYPE.find((s) => s.id === id)?.label || id

@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
-import { CATEGORIES, PRIORITIES } from '../constants'
+import { CATEGORIES, SERVICE_TYPE } from '../constants'
 
 const EMPTY = {
   name: '', entry_no: '', phone: '',
-  category: 'washing_machine', priority: 'normal',
+  category: 'washing_machine', service_type: 'electrician',
   location: '', description: '',
 }
 
@@ -81,9 +81,9 @@ export default function AddProblem() {
               {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
             </select>
           </label>
-          <label>Priority
-            <select value={form.priority} onChange={update('priority')}>
-              {PRIORITIES.map((p) => <option key={p.id} value={p.id}>{p.label}</option>)}
+          <label>Service Type
+            <select value={form.service_type} onChange={update('service_type')}>
+              {SERVICE_TYPE.map((p) => <option key={p.id} value={p.id}>{p.label}</option>)}
             </select>
           </label>
         </div>
