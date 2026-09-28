@@ -29,7 +29,12 @@ export default function App() {
           <Route path="/login" element={<Login />} />
         </Routes>
       </main>
-      <footer className="footer">Aravali Hostel · Maintenance Portal</footer>
+      <footer className="footer">
+        Aravali Hostel · Maintenance Portal
+        <span className="footer-credit">
+          Made by <a href="https://nitinsingh.life/">Nitin Singh</a>
+        </span>
+      </footer>
     </div>
   )
 }

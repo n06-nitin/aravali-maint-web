@@ -35,6 +35,9 @@ input, textarea, select { font-family: inherit; }
   font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
   border-top: 1px solid var(--line-soft);
 }
+.footer-credit { display: block; margin-top: 8px; text-transform: none; letter-spacing: 0.02em; }
+.footer-credit a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.footer-credit a:hover { color: var(--text); }
 
 /* ---------- Navbar ---------- */
 .navbar {
