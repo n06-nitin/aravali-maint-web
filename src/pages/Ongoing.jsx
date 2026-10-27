@@ -7,18 +7,31 @@ import ProblemCard from '../components/ProblemCard'
 export default function Ongoing({ isStaff }) {
   const [problems, setProblems] = useState([])
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(false)
   const [category, setCategory] = useState('all')
   const [search, setSearch] = useState('')
 
   async function load() {
     setLoading(true)
-    const { data, error } = await supabase
-      .from('problems')
-      .select('*')
-      .order('created_at', { ascending: false })
-    if (error) console.error(error)
-    setProblems(data || [])
-    setLoading(false)
+    setLoadError(false)
+    // Some mobile networks silently hang requests to supabase.co — give up instead of spinning forever
+    const controller = new AbortController()
+    const timer = setTimeout(() => controller.abort(), 15000)
+    try {
+      const { data, error } = await supabase
+        .from('problems')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .abortSignal(controller.signal)
+      if (error) throw error
+      setProblems(data || [])
+    } catch (err) {
+      console.error(err)
+      setLoadError(true)
+    } finally {
+      clearTimeout(timer)
+      setLoading(false)
+    }
   }
 
   useEffect(() => { load() }, [])
@@ -70,6 +83,12 @@ export default function Ongoing({ isStaff }) {
 
       {loading ? (
         <p className="hint">Loading…</p>
+      ) : loadError ? (
+        <div className="empty">
+          <p>Couldn't load problems.</p>
+          <span>Check your connection — if you're on mobile data, try Wi-Fi.</span>
+          <button className="btn-primary" style={{ marginTop: 16 }} onClick={load}>Retry</button>
+        </div>
       ) : filtered.length === 0 ? (
         <div className="empty">
           <p>Nothing here yet.</p>
