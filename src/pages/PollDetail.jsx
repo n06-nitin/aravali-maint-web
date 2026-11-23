@@ -56,17 +56,21 @@ export default function PollDetail({ isStaff }) {
       setError('Please select an option to cast your vote.')
       return
     }
-    if (!entryNo.trim()) {
+    if (poll.require_entry_no && !entryNo.trim()) {
       setError('Please enter your IITD Entry Number.')
       return
     }
 
     setSubmitting(true)
     try {
-      await castVote(poll.id, selectedOption, entryNo)
+      const voteEntry = poll.require_entry_no ? entryNo.trim().toUpperCase() : ''
+      await castVote(poll.id, selectedOption, voteEntry)
       const updated = await fetchPollById(poll.id)
       setPoll(updated)
-      setUserVote({ optionId: selectedOption, entryNo: entryNo.trim().toUpperCase() })
+      setUserVote({
+        optionId: selectedOption,
+        entryNo: voteEntry || 'Anonymous',
+      })
       setShowResultsMode(true)
     } catch (err) {
       setError(err.message || 'Could not submit vote. Please try again.')
@@ -267,19 +271,25 @@ export default function PollDetail({ isStaff }) {
           </div>
 
           <div className="poll-cast-footer">
-            <div className="entry-no-input-wrap">
-              <label>
-                Your IITD Entry Number *
-                <input
-                  type="text"
-                  placeholder="e.g. 2024ME20525"
-                  value={entryNo}
-                  onChange={(e) => setEntryNo(e.target.value)}
-                  required
-                />
-              </label>
-              <span className="hint-small">1 vote per student</span>
-            </div>
+            {poll.require_entry_no ? (
+              <div className="entry-no-input-wrap">
+                <label>
+                  Your IITD Entry Number *
+                  <input
+                    type="text"
+                    placeholder="e.g. 2024ME20525"
+                    value={entryNo}
+                    onChange={(e) => setEntryNo(e.target.value)}
+                    required
+                  />
+                </label>
+                <span className="hint-small">1 vote per student</span>
+              </div>
+            ) : (
+              <div className="frictionless-notice">
+                <span>⚡ 1-Click Voting: Select an option and hit Cast Vote</span>
+              </div>
+            )}
 
             {error && <p className="error">{error}</p>}
 
@@ -287,7 +297,11 @@ export default function PollDetail({ isStaff }) {
               <button
                 type="submit"
                 className="btn-primary"
-                disabled={submitting || !selectedOption || !entryNo.trim()}
+                disabled={
+                  submitting ||
+                  !selectedOption ||
+                  (poll.require_entry_no && !entryNo.trim())
+                }
               >
                 {submitting ? 'Submitting Vote…' : 'Cast Vote →'}
               </button>
@@ -311,7 +325,9 @@ export default function PollDetail({ isStaff }) {
             <h2>{isConcluded ? 'Final Results' : 'Current Live Results'}</h2>
             {userVote && (
               <span className="user-voted-notice">
-                ✓ You voted with entry {userVote.entryNo}
+                ✓ {userVote.entryNo && userVote.entryNo !== 'Anonymous'
+                    ? `You voted with entry ${userVote.entryNo}`
+                    : 'Your vote has been counted'}
               </span>
             )}
           </div>

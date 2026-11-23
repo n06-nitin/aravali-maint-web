@@ -10,6 +10,7 @@ export default function NewPoll({ isStaff }) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [startImmediately, setStartImmediately] = useState(true)
+  const [requireEntryNo, setRequireEntryNo] = useState(false)
   const [options, setOptions] = useState([
     { id: 'opt-1', text: '', file: null, previewUrl: '', imageUrl: '' },
     { id: 'opt-2', text: '', file: null, previewUrl: '', imageUrl: '' },
@@ -155,6 +156,7 @@ export default function NewPoll({ isStaff }) {
         description,
         options: preparedOptions,
         startImmediately,
+        require_entry_no: requireEntryNo,
       })
 
       navigate(`/polls/${created.id}`)
@@ -306,6 +308,22 @@ export default function NewPoll({ isStaff }) {
             />
             <span>Start Poll immediately upon creation (Voting open)</span>
           </label>
+        </div>
+
+        <div className="form-toggle-row">
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              checked={requireEntryNo}
+              onChange={(e) => setRequireEntryNo(e.target.checked)}
+            />
+            <span>Require IITD Entry Number to vote</span>
+          </label>
+          <span className="hint-small" style={{ marginLeft: 27, marginTop: 4 }}>
+            {requireEntryNo
+              ? 'Enforces 1 vote per student entry number.'
+              : 'Default (Off): Frictionless 1-click voting (no entry number required).'}
+          </span>
         </div>
 
         {error && <p className="error">{error}</p>}

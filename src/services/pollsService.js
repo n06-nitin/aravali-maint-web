@@ -4,6 +4,16 @@ import { supabase } from '../supabaseClient'
 const LOCAL_POLLS_KEY = 'aravali_cached_polls'
 const LOCAL_VOTES_KEY = 'aravali_user_votes'
 export const ENTRY_NO_KEY = 'aravali_user_entry_no'
+export const DEVICE_ID_KEY = 'aravali_device_id'
+
+export function getOrCreateDeviceId() {
+  let id = localStorage.getItem(DEVICE_ID_KEY)
+  if (!id) {
+    id = 'dev_' + Math.random().toString(36).slice(2) + Date.now().toString(36)
+    localStorage.setItem(DEVICE_ID_KEY, id)
+  }
+  return id
+}
 
 // Sample initial poll for instant preview / fallback
 const SEED_POLLS = [
@@ -186,12 +196,13 @@ export async function fetchPollById(id) {
   }
 }
 
-export async function createPoll({ title, description, options, startImmediately = true }) {
+export async function createPoll({ title, description, options, startImmediately = true, require_entry_no = false }) {
   const pollData = {
     title: title.trim(),
     description: description?.trim() || null,
     status: startImmediately ? 'active' : 'ended',
     options,
+    require_entry_no: !!require_entry_no,
   }
 
   try {
@@ -258,13 +269,19 @@ export async function deletePoll(id) {
   }
 }
 
-export async function castVote(pollId, optionId, entryNo) {
-  const cleanEntry = entryNo.trim().toUpperCase()
+export async function castVote(pollId, optionId, entryNo = '') {
+  const hasEntry = entryNo && entryNo.trim().length > 0
+  const cleanEntry = hasEntry
+    ? entryNo.trim().toUpperCase()
+    : 'anon_' + getOrCreateDeviceId()
 
   // First check if already voted in localStorage
   const existingLocal = getLocalUserVote(pollId)
   if (existingLocal) {
-    throw new Error(`You have already voted for this poll (${existingLocal.entryNo}).`)
+    const who = existingLocal.entryNo && !existingLocal.entryNo.startsWith('anon_')
+      ? `(${existingLocal.entryNo})`
+      : 'from this device'
+    throw new Error(`You have already voted for this poll ${who}.`)
   }
 
   try {
@@ -280,13 +297,17 @@ export async function castVote(pollId, optionId, entryNo) {
 
     if (error) {
       if (error.code === '23505') {
-        throw new Error('This entry number has already voted in this poll.')
+        throw new Error(
+          hasEntry
+            ? 'This entry number has already voted in this poll.'
+            : 'A vote has already been recorded from this browser.'
+        )
       }
       throw error
     }
 
     recordLocalUserVote(pollId, optionId, cleanEntry)
-    saveEntryNo(cleanEntry)
+    if (hasEntry) saveEntryNo(cleanEntry)
     return data
   } catch (err) {
     if (err.message?.includes('already voted')) {
@@ -301,7 +322,7 @@ export async function castVote(pollId, optionId, entryNo) {
     localStorage.setItem('aravali_mock_vote_counts', JSON.stringify(allTallies))
 
     recordLocalUserVote(pollId, optionId, cleanEntry)
-    saveEntryNo(cleanEntry)
+    if (hasEntry) saveEntryNo(cleanEntry)
     return { poll_id: pollId, option_id: optionId, entry_no: cleanEntry }
   }
 }

@@ -64,14 +64,18 @@ create policy "public can read photos"
 
 -- 5. Hostel Polls --------------------------------------------------------
 create table if not exists public.polls (
-  id          uuid primary key default gen_random_uuid(),
-  created_at  timestamptz not null default now(),
-  title       text not null,
-  description text,
-  status      text not null default 'active', -- 'active' | 'ended'
-  options     jsonb not null default '[]'::jsonb, -- array of { id, text, image_url }
-  ended_at    timestamptz
+  id               uuid primary key default gen_random_uuid(),
+  created_at       timestamptz not null default now(),
+  title            text not null,
+  description      text,
+  status           text not null default 'active', -- 'active' | 'ended'
+  options          jsonb not null default '[]'::jsonb, -- array of { id, text, image_url }
+  require_entry_no boolean not null default false,
+  ended_at         timestamptz
 );
+
+-- In case table already existed, add column if missing:
+alter table public.polls add column if not exists require_entry_no boolean not null default false;
 
 alter table public.polls enable row level security;
 
