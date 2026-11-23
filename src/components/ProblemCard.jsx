@@ -64,7 +64,7 @@ export default function ProblemCard({ problem, isStaff, onUpdate, onDelete }) {
       {open && (
         <div className="card-details" onClick={stop}>
           {problem.location && <p className="card-meta">📍 {problem.location}</p>}
-          <p className="card-meta">📞 {problem.phone}</p>
+          {problem.phone && <p className="card-meta">📞 {problem.phone}</p>}
 
           {problem.photo_urls?.length > 0 && (
             <div className="card-photos">

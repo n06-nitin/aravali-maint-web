@@ -20,8 +20,8 @@ export default function AddProblem() {
 
   async function handleSubmit() {
     setError('')
-    if (!form.name || !form.entry_no || !form.phone || !form.description) {
-      setError('Name, entry no, phone and the problem description are required.')
+    if (!form.name || !form.entry_no || !form.description) {
+      setError('Name, entry no and the problem description are required.')
       return
     }
     setLoading(true)
@@ -38,7 +38,7 @@ export default function AddProblem() {
 
       const { error: insErr } = await supabase.from('problems').insert({
         ...form,
-        phone: form.phone.trim(),
+        phone: form.phone?.trim() || '',
         photo_urls,
       })
       if (insErr) throw insErr
@@ -67,7 +67,7 @@ export default function AddProblem() {
         </div>
 
         <div className="row">
-          <label>Phone *
+          <label>Phone (optional)
             <input value={form.phone} onChange={update('phone')} placeholder="10-digit number" />
           </label>
           <label>Problem Location

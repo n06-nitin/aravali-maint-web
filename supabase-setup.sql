@@ -9,7 +9,7 @@ create table if not exists public.problems (
   created_at    timestamptz not null default now(),
   name          text not null,
   entry_no      text not null,
-  phone         text not null,
+  phone         text,
   category      text not null,          -- washing_machine | washrooms | rooms | general | others
   priority      text not null default 'normal',   -- normal | urgent
   location      text,
@@ -18,6 +18,9 @@ create table if not exists public.problems (
   status        text not null default 'new',       -- new | registered | resolved
   resolved_at   timestamptz
 );
+
+-- In case table already exists, allow phone to be optional:
+alter table public.problems alter column phone drop not null;
 
 -- 2. Row Level Security -------------------------------------------------
 alter table public.problems enable row level security;
