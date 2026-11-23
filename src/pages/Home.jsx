@@ -6,7 +6,7 @@ export default function Home() {
       <p className="eyebrow">Aravali Hostel · IIT Delhi</p>
       <h1 className="hero-title">Maintenance Portal</h1>
       <p className="hero-sub">
-        Report anything that needs fixing, and follow it until it's done.
+        Report anything that needs fixing, follow progress, and vote on hostel improvements.
       </p>
 
       <div className="home-cards">
@@ -22,6 +22,13 @@ export default function Home() {
           <h2>Add a Problem</h2>
           <p>Report a new issue in under a minute, with photos.</p>
           <span className="hc-go">Report now →</span>
+        </Link>
+
+        <Link to="/polls" className="home-card poll-card-highlight">
+          <span className="hc-label">03</span>
+          <h2>Hostel Polls</h2>
+          <p>Vote on new hostel furniture, equipment, and view past poll results.</p>
+          <span className="hc-go">Explore polls →</span>
         </Link>
       </div>
     </section>

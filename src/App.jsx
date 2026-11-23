@@ -6,6 +6,9 @@ import Home from './pages/Home'
 import AddProblem from './pages/AddProblem'
 import Ongoing from './pages/Ongoing'
 import Login from './pages/Login'
+import Polls from './pages/Polls'
+import PollDetail from './pages/PollDetail'
+import NewPoll from './pages/NewPoll'
 
 export default function App() {
   const [session, setSession] = useState(null)
@@ -26,6 +29,9 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/add" element={<AddProblem />} />
           <Route path="/ongoing" element={<Ongoing isStaff={isStaff} />} />
+          <Route path="/polls" element={<Polls isStaff={isStaff} />} />
+          <Route path="/polls/new" element={<NewPoll isStaff={isStaff} />} />
+          <Route path="/polls/:id" element={<PollDetail isStaff={isStaff} />} />
           <Route path="/login" element={<Login />} />
         </Routes>
       </main>

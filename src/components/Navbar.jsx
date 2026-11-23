@@ -4,6 +4,7 @@ import { supabase } from '../supabaseClient'
 export default function Navbar({ isStaff }) {
   const { pathname } = useLocation()
   const is = (p) => (pathname === p ? 'nav-link active' : 'nav-link')
+  const isPolls = pathname.startsWith('/polls') ? 'nav-link active' : 'nav-link'
 
   return (
     <header className="navbar">
@@ -16,6 +17,7 @@ export default function Navbar({ isStaff }) {
         <Link className={is('/')} to="/">Home</Link>
         <Link className={is('/ongoing')} to="/ongoing">Ongoing</Link>
         <Link className={is('/add')} to="/add">Add Problem</Link>
+        <Link className={isPolls} to="/polls">Polls</Link>
         {isStaff ? (
           <button className="nav-link ghost" onClick={() => supabase.auth.signOut()}>
             Log out
